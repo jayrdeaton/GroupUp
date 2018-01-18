@@ -1,0 +1,23 @@
+{
+  "name": "groupup",
+  "version": "1.0.0",
+  "description": "Command line application for managing development projects and their dependencies",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jay Deaton",
+  "license": "ISC",
+  "bin": {
+    "groupup": "./index.js"
+  },
+  "dependencies": {
+    "chalk": "^2.3.0",
+    "commander": "^2.12.2",
+    "git-config": "0.0.7",
+    "inquirer": "^5.0.0",
+    "node-cmd": "^3.0.0",
+    "uuid": "^3.1.0",
+    "working-bar": "^1.1.0"
+  }
+}
