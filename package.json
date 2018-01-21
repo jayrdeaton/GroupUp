@@ -18,6 +18,6 @@
     "inquirer": "^5.0.0",
     "node-cmd": "^3.0.0",
     "uuid": "^3.1.0",
-    "working-bar": "^1.1.0"
+    "working-bar": "^1.4.3"
   }
 }

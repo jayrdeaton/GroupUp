@@ -2,52 +2,41 @@ let helpers = require('./helpers'),
   runCommand = helpers.runCommand,
   store = require('./store'),
   chalk = require('chalk'),
-  WorkingBar = require('working-bar');
+  workingBar = require('./config').workingBar;
 
-let working = new WorkingBar();
-
-let updateAll = () => {
-  working.start();
+let updateAll = async () => {
+  workingBar.start();
   let projects = store.findAll('projects');
   if (projects.length == 0) {
-    console.log(chalk.red('No projects to update'));
+    workingBar.message(chalk.red('No projects to update'));
+    workingBar.stop();
     return null;
   };
-  let updates = [];
   for (let project of projects) {
     let commands = store.findAll('commands', { project: project.uuid });
     if (!commands) {
-      console.log(chalk.red(`No update commands for ${project.name}`));
+      workingBar.message(chalk.red(`No update commands for ${project.name}`));
       continue;
     };
-    let update = updateProject(project, commands).then((response) => {
-      working.stop();
-      console.log(response);
-      working.start();
-    }).catch((err) => {
-      console.log(chalk.red(err));
-    });
-    updates.push(update);
+    await updateProject(project, commands)
   };
-  Promise.all(updates).then((data) => {
-    working.stop();
-    console.log(chalk.green('Group update completed'));
-  });
+  workingBar.message(chalk.green('\nGroup update completed\n'));
+  workingBar.stop();
 };
 
 let updateProject = async (project, commands) => {
-  let response = chalk.underline(`\n${project.name}\n`);
+  workingBar.message(chalk.underline(`\n${project.name}\n`));
   for (command of commands) {
-    response += chalk.cyan(`${command.string}\n`);
+    workingBar.message(chalk.cyan(`${command.string}`));
     let data = await runUpdate(`cd ${project.projectDir}; ${command.string}`);
     if (data.error) {
-      response += chalk.red(`${data.string}`);
+      workingBar.message(chalk.red('Error: '));
+      workingBar.message(`${data.string}`);
+      return null;
     } else {
-      if (command.verbose) response += `${data.string}`;
+      if (command.verbose) workingBar.message(`${data.string}`);
     };
-
   };
-  return response;
 };
 
 let runUpdate = (string) => {
